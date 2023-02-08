@@ -1,7 +1,7 @@
 body {
   height:100vh;
   background-color: blue;
-  background-image: linear-gradient(to bottom right, rgb(188, 216, 255), rgb(217, 238, 255));
+  background-image: linear-gradient(to bottom right, rgb(0, 106, 255), rgb(217, 238, 255));
   font-family: arial, sans-serif;
 }
 
