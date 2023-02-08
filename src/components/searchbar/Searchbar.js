@@ -1,7 +1,8 @@
 import {useState,useEffect} from "react";
 import axios from "axios";
-import { Button,Grid,TextField } from "@mui/material";
+import { Button,Grid,TextField,Backdrop } from "@mui/material";
 import WeatherCard from "../weatherCard/WeatherCard";
+import CircularProgress from '@mui/material/CircularProgress';
 
 const Searchbar=()=>{
     const API_KEY = "48cbb97aed6e493105e920f2dca487f4";
@@ -9,9 +10,11 @@ const Searchbar=()=>{
     const [lon,setLon]=useState(77.590082)
     const [city,setCity]=useState("Bangalore")
     const [weather,setWeather]=useState({})
+    const [loading,setLoading]=useState(false)
 
     const getCityWeather=async(e)=>{
         e.preventDefault();
+        setLoading(true)
         await axios.get("http://api.openweathermap.org/geo/1.0/direct",{
             params: {
               q: city,
@@ -26,7 +29,7 @@ const Searchbar=()=>{
             setLon(logitude);
             getWeather(latitude,logitude);
         })
-          .catch((e)=>[])
+          .catch((e)=>setLoading(false))
     }
 
     const dateConvert=(date)=>{
@@ -36,7 +39,7 @@ const Searchbar=()=>{
        return `${hours}:${min}`
     }
     const getWeather=async (latitude,logitude)=>{
-
+      setLoading(true)
         await axios.get("https://api.openweathermap.org/data/3.0/onecall",{
             params: {
               lat: latitude,
@@ -46,6 +49,7 @@ const Searchbar=()=>{
             }
           })
           .then((res)=>{
+            setLoading(false)
             const data = {
                 temp:res.data.current.temp,
                 humidity:res.data.current.humidity,
@@ -58,7 +62,7 @@ const Searchbar=()=>{
             }
             setWeather(data)
           })
-          .catch((e)=>[])
+          .catch((e)=>setLoading(false))
     }
 
     const handleOnChange=(e)=>{
@@ -83,6 +87,12 @@ const Searchbar=()=>{
                     <WeatherCard data={weather}/>
                 </Grid>
             )}
+                    <Backdrop
+                    sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                    open={loading}
+                  >
+                    <CircularProgress sx={{color:"blue"}} />
+                  </Backdrop>
         </>
     )
 }
